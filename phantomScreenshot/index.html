@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital@1&display=swap" rel="stylesheet"> 
+
+    <title>ScreenshotMe 📷</title>
+
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: #EEEEEE;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            font-family: roboto;
+            color: #424242;
+        }
+        #form-wrap {
+            margin: 0px auto;
+            display: block;
+            text-align: center;
+        }
+        form {
+            padding: 5px;
+            background-color: #a1bcb5;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        input[type="url"] {
+            padding: 15px;
+            background-color: white;
+            border: none;
+            outline: none;
+            width: 400px;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            margin: 0;
+            font-size: 14px;
+        }
+        input[type='submit'] {
+            border: none;
+            outline: none;
+            padding: 15px 30px;
+            font-size: 14px;
+            margin-left: -6px;
+            background-color: #42786b;
+            cursor: pointer;
+            color: white;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        #screenshot-wrap {
+            max-width: 500px;
+            max-height: 300px;
+            margin: 0px auto;
+            overflow: hidden;
+            border-radius: 4px;
+            display: block;
+        }
+        #screenshot {
+            width: 100%;
+        }
+
+        .loader {
+            display: none;
+            border: 16px solid #a1bcb5;
+            border-top: 16px solid #42786b;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            margin: 0px auto;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="form-wrap">
+        <form method="POST" action="/screenshot/" id="form-screenshot">
+            <input type="url" placeholder="URL of the website" name="url" required id="url">
+            <input type="submit" value="screenshot 📷">
+        </form>
+        <p>Entrez l'URL d'un site web dont vous voulez faire un screenshot</p>
+        <a id="screenshot-wrap" href="#">
+            <div class="loader"></div> 
+            <img id="screenshot">
+        </a>
+    </div>
+
+    <script>
+
+        document.querySelector("#form-screenshot").addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.querySelector(".loader").style.display = "block";
+            document.querySelector("#screenshot").style.display = "none";
+            document.querySelector("#screenshot-wrap").href = "#";
+            fetch("/screenshot/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ "url": document.querySelector("#url").value })
+            })
+            .then(r => r.json())
+            .then(r => {
+                document.querySelector(".loader").style.display = "none";
+                document.querySelector("#screenshot-wrap").href = r.image;
+                document.querySelector("#screenshot").src = r.image;
+                document.querySelector("#screenshot").style.display = "block";
+            })
+            .catch((err) => {
+                document.querySelector(".loader").style.display = "none";
+                console.log(err);
+            })
+
+            return false;
+        })
+
+    </script>
+</body>
+</html>

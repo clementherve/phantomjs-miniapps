@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto@1&display=swap" rel="stylesheet"> 
+
+    <title>WikiCopy 🤓</title>
+
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: #EEEEEE;
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            font-family: roboto;
+            color: #424242;
+        }
+        a {
+            text-decoration: none;
+            color: #424242;
+        }
+        #form-wrap {
+            margin: 0px auto;
+            display: block;
+            text-align: center;
+        }
+        form {
+            padding: 5px;
+            background-color: #bfabe1;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        input[type="url"] {
+            padding: 15px;
+            background-color: white;
+            border: none;
+            outline: none;
+            width: 400px;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            margin: 0;
+            font-size: 14px;
+        }
+        input[type='submit'] {
+            border: none;
+            outline: none;
+            padding: 15px 30px;
+            font-size: 14px;
+            margin-left: -6px;
+            background-color: #7E57C2;
+            cursor: pointer;
+            color: white;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        #copy-wrap {
+            max-width: 500px;
+            max-height: 300px;
+            margin: 0px auto;
+            overflow: hidden;
+            border-radius: 4px;
+            display: block;
+        }
+        #copy {
+            background-color: white;
+            height: 50px;
+            border-radius: 4px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            width: 250px;
+            font-size: 13px;
+            margin: 20px auto;
+            display: none;
+            text-align: center;
+            position: relative;
+            line-height: 50px;
+            transition: all 250ms;
+        }
+        #copy:hover {
+            transition: all 250ms;
+            box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.1);
+        }
+        #copy svg {
+            height: 50px;
+            margin: 0;
+            vertical-align: middle;
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            padding-right: 15px;
+            border-right: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        #copy span {
+            text-align: center;
+            margin-right: -30px;
+        }
+
+        .loader {
+            display: none;
+            border: 16px solid #bfabe1;
+            border-top: 16px solid #7E57C2;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            margin: 20px auto;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="form-wrap">
+        <form method="POST" action="/images" id="form-copy">
+            <input type="url" placeholder="URL de la page wiki" name="url" required id="url">
+            <input type="submit" value="copy 🤓">
+        </form>
+        <div id="copy-wrap" href="#">
+            <div class="loader"></div> 
+            <a id="copy" href="#" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#7E57C2"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> <span>images.zip</span></a>
+        </div>
+    </div>
+
+    <script>
+
+        document.querySelector("#form-copy").addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.querySelector(".loader").style.display = "block";
+            document.querySelector("#copy").style.display = "none";
+            fetch("/images/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ "url": document.querySelector("#url").value })
+            })
+            .then(r => r.json())
+            .then(r => {
+                document.querySelector(".loader").style.display = "none";
+                document.querySelector("#copy").href = r.url;
+                document.querySelector("#copy").style.display = "block";
+            })
+            .catch((err) => {
+                document.querySelector(".loader").style.display = "none";
+                console.log(err);
+            })
+
+            return false;
+        })
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<ul>
+    <li><span>Temps de chargement:</span> <%= loadtime %>s</li>
+    <li><%= requests %> requetes</li>
+    <li><%= repaints %> repaints </li>
+</ul>
+
+<ul>
+    <li><span>Chargement du HTML:</span> <%= performance.html %>s</li>
+    <li><span>Chargement du DOM:</span> <%= performance.dom %>s</li>
+    <li><span>Chargement du CSSOM:</span> <%= performance.cssom %>s</li>
+    <li><span>CRP:</span> <%= performance.crp %>s</li>
+</ul>
+
+<ul>
+    <% urls.forEach(function(item) { %>
+        <li><a class="shorten" href="<%= item.url %>"><%= item.url.substring(0, 50) %>... </a> (<%= item.size %>Kb)</li>
+    <% }); %>
+</ul>
